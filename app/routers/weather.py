@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 import requests
+from fastapi.templating import Jinja2Templates
 
 from app.services.weather_service import (
     find_coordinates,
@@ -8,9 +9,10 @@ from app.services.weather_service import (
 )
 
 router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
 @router.get("/forecast")
-def geocode(location: str):
+def forecast(location: str):
 
     if not location.strip():
         raise HTTPException(
@@ -45,6 +47,14 @@ def geocode(location: str):
         )
     
     return {
-    "hourly_forecast": hourly_forecast,
-    "daily_forecast": daily_forecast,
+        "hourly_forecast": hourly_forecast,
+        "daily_forecast": daily_forecast,
     }
+
+
+@router.get("/")
+def home(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html"
+    )
