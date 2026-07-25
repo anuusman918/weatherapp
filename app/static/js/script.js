@@ -18,11 +18,11 @@ searchButton.addEventListener("click", async () => {
         const hourCard = document.createElement("div");
 
         hourCard.innerHTML = `
-            <p>Time: ${hour.time}</p>
+            <p>Time: ${formatTime(hour.time)}</p>
             <p>Temperature: ${hour.temperature}°C</p>
             <p>Feels like: ${hour.apparent_temperature}°C</p>
             <p>Precipitation probability: ${hour.precipitation_probability}%</p>
-            <p>Weather code: ${hour.weather_code}</p>
+            <p>Weather code: ${getWeatherDescription(hour.weather_code)}</p>
         `;  
 
         hourlyForecastContainer.appendChild(hourCard);
@@ -39,16 +39,14 @@ searchButton.addEventListener("click", async () => {
         const dayCard = document.createElement("div");
 
         dayCard.innerHTML = `
-            <p>Date: ${day.date}</p>
+            <p>Date: ${formatDate(day.date)}</p>
             <p>Maximum temperature: ${day.max_temperature}°C</p>
             <p>Mean temperature: ${day.mean_temperature}°C</p>
             <p>Minimum temperature: ${day.min_temperature}°C</p>
-            <p>Weather code: ${day.weather_code}</p>
+            <p>Weather code: ${getWeatherDescription(day.weather_code)}</p>
         `;
 
         dailyForecastContainer.appendChild(dayCard);
     }
-
-    
 });
 
