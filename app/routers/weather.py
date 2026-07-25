@@ -58,3 +58,26 @@ def home(request: Request):
         request=request,
         name="index.html"
     )
+
+@router.get("/forecast/coordinates")
+def forecast_by_coordinates(latitude: float, longitude: float):
+    try:
+        data = get_forecast(latitude, longitude)
+    except requests.RequestException:
+        raise HTTPException(
+            status_code=503,
+            detail="Weather service is currently unavailable",
+        ) 
+
+    try:
+        hourly_forecast, daily_forecast = format_forecast(data)
+    except (KeyError, TypeError, ValueError):
+        raise HTTPException(
+            status_code=502,
+            detail="Invalid response received from weather service",
+        )
+    
+    return {
+        "hourly_forecast": hourly_forecast,
+        "daily_forecast": daily_forecast,
+    }

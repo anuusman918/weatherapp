@@ -1,14 +1,31 @@
 const searchButton = document.getElementById("search-button");
 const locationInput = document.getElementById("location");
-const hourlyForecast = document.getElementById("hourly-forecast");
 const hourlyForecastContainer = document.getElementById("hourly-forecast-container");
 
 searchButton.addEventListener("click", async () => {
-    const location = locationInput.value;
+    const location = locationInput.value.trim();
+    let response;
 
-    const response = await fetch(`/forecast?location=${location}`);
+    if (isCoordinates(location)) {
+        const parts = location.split(",");
+        const latitude = parts[0].trim();
+        const longitude = parts[1].trim();
+
+        response = await fetch(
+            `/forecast/coordinates?latitude=${latitude}&longitude=${longitude}`
+        );
+    } else {
+        response = await fetch(
+            `/forecast?location=${encodeURIComponent(location)}`
+        );
+    }
 
     const data = await response.json();
+
+    if (!response.ok) {
+        alert(data.detail || "Something went wrong.");
+        return;
+    }
 
     hourlyForecastContainer.innerHTML = "";
 
@@ -49,4 +66,29 @@ searchButton.addEventListener("click", async () => {
         dailyForecastContainer.appendChild(dayCard);
     }
 });
+
+function isCoordinates(input) {
+    const parts = input.split(",");
+
+    //latitude and longitude are two parts so reject anything else
+    if (parts.length !== 2) {
+        return false;
+    }
+
+    const latitude = Number(parts[0].trim());
+    const longitude = Number(parts[1].trim());
+
+    //make sure its a number (since input could still be city and country so could pass previous check)
+    if (Number.isNaN(latitude) || Number.isNaN(longitude)) {
+        return false;
+    }
+
+    //ensure latitude and longitude are valid numbers
+    return (
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180
+    );
+}
 
