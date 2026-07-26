@@ -4,7 +4,7 @@ from app.models.daily_forecast import DailyForecast
 
 GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search"
 
-#receives location from user and gets latitude and longitude
+#gets latitude and longitude for first matching result for a city/country
 def find_coordinates(location):
     #get data for the city searched for - takes first result
     response = requests.get(GEOCODING_URL, params={
@@ -27,7 +27,7 @@ def find_coordinates(location):
 
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 
-#receives latitude and longitude and gets weather data
+#gets weather data from Meteo
 def get_forecast(latitude, longitude):
     params = {
     "latitude": latitude,
@@ -47,10 +47,50 @@ def get_forecast(latitude, longitude):
     
     return data
 
-
+#validates weather data and formats data into HourlyForecast and DailyForecast object lists
 def format_forecast(data):
+    if not isinstance(data, dict):
+        raise ValueError("Forecast data must be a dictionary")
 
-    #extract hourly data
+    if "hourly" not in data or "daily" not in data:
+        raise ValueError("Missing hourly or daily forecast data")
+
+    hourly_data = data["hourly"]
+    daily_data = data["daily"]
+
+    required_hourly_fields = [
+        "time",
+        "temperature_2m",
+        "apparent_temperature",
+        "precipitation_probability",
+        "weather_code"
+    ]
+
+    required_daily_fields = [
+        "time",
+        "temperature_2m_max",
+        "temperature_2m_mean",
+        "temperature_2m_min",
+        "weather_code"
+    ]
+
+    if any(field not in hourly_data for field in required_hourly_fields):
+        raise ValueError("Missing required hourly forecast field")
+
+    if any(field not in daily_data for field in required_daily_fields):
+        raise ValueError("Missing required daily forecast field")
+
+    if any(len(hourly_data[field]) < 24 for field in required_hourly_fields):
+        raise ValueError("Hourly forecast must contain at least 24 entries")
+
+    daily_length = len(daily_data["time"])
+
+    if any(
+        len(daily_data[field]) != daily_length
+        for field in required_daily_fields
+    ):
+        raise ValueError("Daily forecast fields have different lengths")
+
     hourly_data = data["hourly"]
     time = hourly_data["time"]
     temperature_2m = hourly_data["temperature_2m"]
@@ -58,9 +98,8 @@ def format_forecast(data):
     precipitation_probability = hourly_data["precipitation_probability"]
     weather_code = hourly_data["weather_code"]
 
-    #form list of hourly data objects
+
     hourly_forecast = []
-    # for i in range(len(time)):
     #for now return only the next twenty four hours
     for i in range(24):
         time_i = time[i]
@@ -71,7 +110,6 @@ def format_forecast(data):
         hourly_forecast.append(HourlyForecast(time_i, temperature_2m_i, apparent_temperature_i, precipitation_probability_i, weather_code_i))
 
 
-    #extract daily data
     daily_data = data["daily"]
     date = daily_data["time"]
     temperature_2m_max = daily_data["temperature_2m_max"]
@@ -79,7 +117,7 @@ def format_forecast(data):
     temperature_2m_min = daily_data["temperature_2m_min"]
     weather_code_daily = daily_data["weather_code"]
 
-    #form list of daily forecast objects
+
     daily_forecast = []
     for i in range(len(date)):
         date_i = date[i]

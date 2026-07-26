@@ -11,6 +11,14 @@ from app.services.weather_service import (
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
+
+@router.get("/")
+def home(request: Request):
+    return templates.TemplateResponse(
+        request=request,
+        name="index.html"
+    )
+
 @router.get("/forecast")
 def forecast(location: str):
 
@@ -52,12 +60,6 @@ def forecast(location: str):
     }
 
 
-@router.get("/")
-def home(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html"
-    )
 
 @router.get("/forecast/coordinates")
 def forecast_by_coordinates(latitude: float, longitude: float):

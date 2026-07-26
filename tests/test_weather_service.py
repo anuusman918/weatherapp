@@ -1,5 +1,6 @@
 from unittest.mock import patch
 from app.services.weather_service import find_coordinates, get_forecast, format_forecast
+import pytest
 
 @patch("app.services.weather_service.requests.get")
 def test_find_coordinates_success(mock_get):
@@ -114,3 +115,67 @@ def test_format_forecast_success():
     assert daily_forecast[0].mean_temperature == 20
     assert daily_forecast[0].min_temperature == 15
     assert daily_forecast[0].weather_code == 0
+
+
+
+
+def test_format_forecast_missing_field():
+    data = {
+        "hourly": {},
+        "daily": {}
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        format_forecast(data)
+
+    assert str(exc_info.value) == "Missing required hourly forecast field"
+
+
+def test_format_forecast_insufficient_hourly_data():
+    data = {
+        "hourly": {
+            "time": ["2026-07-26T00:00"],
+            "temperature_2m": [20],
+            "apparent_temperature": [19],
+            "precipitation_probability": [10],
+            "weather_code": [0]
+        },
+        "daily": {
+            "time": ["2026-07-26"],
+            "temperature_2m_max": [25],
+            "temperature_2m_mean": [20],
+            "temperature_2m_min": [15],
+            "weather_code": [0]
+        }
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        format_forecast(data)
+
+    assert str(exc_info.value) == \
+        "Hourly forecast must contain at least 24 entries"
+
+
+def test_format_forecast_mismatched_daily_lengths():
+    data = {
+        "hourly": {
+            "time": [f"2026-07-26T{i:02d}:00" for i in range(24)],
+            "temperature_2m": [20] * 24,
+            "apparent_temperature": [19] * 24,
+            "precipitation_probability": [10] * 24,
+            "weather_code": [0] * 24
+        },
+        "daily": {
+            "time": ["2026-07-26", "2026-07-27"],
+            "temperature_2m_max": [25],
+            "temperature_2m_mean": [20, 21],
+            "temperature_2m_min": [15, 16],
+            "weather_code": [0, 1]
+        }
+    }
+
+    with pytest.raises(ValueError) as exc_info:
+        format_forecast(data)
+
+    assert str(exc_info.value) == \
+        "Daily forecast fields have different lengths"
