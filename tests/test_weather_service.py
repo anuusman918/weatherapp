@@ -51,3 +51,30 @@ def test_get_forecast_success(mock_get):
 
     assert result == mock_result
     mock_get.assert_called_once()
+
+
+@patch("app.services.weather_service.requests.get")
+def test_get_forecast_missing_daily(mock_get):
+    mock_response = mock_get.return_value
+    mock_result = {
+        "hourly": {}
+    }
+    mock_response.json.return_value = mock_result
+
+    result = get_forecast(0,0)
+
+    assert result is None
+    mock_get.assert_called_once()
+
+@patch("app.services.weather_service.requests.get")
+def test_get_forecast_missing_hourly(mock_get):
+    mock_response = mock_get.return_value
+    mock_result = {
+        "daily": {}
+    }
+    mock_response.json.return_value = mock_result
+
+    result = get_forecast(0,0)
+
+    assert result is None
+    mock_get.assert_called_once()
