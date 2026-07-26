@@ -94,12 +94,6 @@ def format_forecast(data):
 
 
 
-# lat, long = find_coordinates("karachi")
-# data = get_forecast(lat, long)
-# hourly, daily = format_forecast(data)
-# print(hourly)
-# print(daily)
-
 
 
 
