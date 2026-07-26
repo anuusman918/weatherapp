@@ -100,7 +100,7 @@ def format_forecast(data):
 
 
     hourly_forecast = []
-    #for now return only the next twenty four hours
+    #return only the next 24 hours to keep the forecast concise
     for i in range(24):
         time_i = time[i]
         temperature_2m_i = temperature_2m[i]

@@ -7,6 +7,7 @@ searchButton.addEventListener("click", async () => {
     const location = locationInput.value.trim();
     let response;
 
+    //choose the appropriate endpoint based on the user's input
     if (isCoordinates(location)) {
         const parts = location.split(",");
         const latitude = parts[0].trim();
@@ -90,6 +91,7 @@ function displayForecast(data) {
 
     hourlyForecastContainer.innerHTML = "";
 
+    //render the hourly forecast cards
     for (let i = 0; i < data.hourly_forecast.length; i++) {
         const hour = data.hourly_forecast[i];
         const hourCard = document.createElement("div");
@@ -110,7 +112,7 @@ function displayForecast(data) {
         document.getElementById("daily-forecast-container");
 
     dailyForecastContainer.innerHTML = "";
-
+    //render the daily forecast cards
     for (let i = 0; i < data.daily_forecast.length; i++) {
         const day = data.daily_forecast[i];
         const dayCard = document.createElement("div");
