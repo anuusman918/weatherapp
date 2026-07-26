@@ -56,14 +56,6 @@ function isCoordinates(input) {
     );
 }
 
-currentLocationButton.addEventListener("click", async () => {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(success, error);
-    } else {
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-});
-
 currentLocationButton.addEventListener("click", () => {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(success, error);
@@ -95,11 +87,13 @@ function error() {
 }
 
 function displayForecast(data) {
+
     hourlyForecastContainer.innerHTML = "";
 
     for (let i = 0; i < data.hourly_forecast.length; i++) {
         const hour = data.hourly_forecast[i];
         const hourCard = document.createElement("div");
+        hourCard.classList.add("forecast-card");
 
         hourCard.innerHTML = `
             <p>Time: ${formatTime(hour.time)}</p>
@@ -120,6 +114,7 @@ function displayForecast(data) {
     for (let i = 0; i < data.daily_forecast.length; i++) {
         const day = data.daily_forecast[i];
         const dayCard = document.createElement("div");
+        dayCard.classList.add("forecast-card");
 
         dayCard.innerHTML = `
             <p>Date: ${formatDate(day.date)}</p>

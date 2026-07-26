@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
 </head>
 <body>
 
+<header>
     <h1>Weather App</h1>
 
     <div>
@@ -17,12 +19,13 @@
         >
         <button id="search-button">Search</button>
     </div>
-
+    
     <button id="current-location-button">
         Use My Location
     </button>
 
     <p id="error-message"></p>
+</header>
 
     <section id="hourly-forecast">
         <h2>Hourly Forecast</h2>
@@ -35,6 +38,6 @@
     </section>
 
     <script src="/static/js/weatherUtils.js"></script>
-    <script src="/static/js/script.js"></script>
+    <script src="/static/js/script.js?v=2"></script>
 </body>
 </html>
