@@ -25,6 +25,7 @@ button {
     margin-bottom: 12px;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    flex: 0 0 220px;
 }
 
 #hourly-forecast-container,
@@ -32,4 +33,21 @@ button {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
+}
+
+.forecast-card p {
+    margin: 6px 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+header {
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 32px;
 }
