@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from app.services.weather_service import find_coordinates, get_forecast
+from app.services.weather_service import find_coordinates, get_forecast, format_forecast
 
 @patch("app.services.weather_service.requests.get")
 def test_find_coordinates_success(mock_get):
@@ -78,3 +78,39 @@ def test_get_forecast_missing_hourly(mock_get):
 
     assert result is None
     mock_get.assert_called_once()
+
+
+def test_format_forecast_success():
+    data = {
+        "hourly": {
+            "time": [f"2026-07-26T{i:02d}:00" for i in range(24)],
+            "temperature_2m": [20] * 24,
+            "apparent_temperature": [19] * 24,
+            "precipitation_probability": [10] * 24,
+            "weather_code": [0] * 24
+        },
+        "daily": {
+            "time": ["2026-07-26", "2026-07-27"],
+            "temperature_2m_max": [25, 26],
+            "temperature_2m_mean": [20, 21],
+            "temperature_2m_min": [15, 16],
+            "weather_code": [0, 1]
+        }
+    }
+
+    hourly_forecast, daily_forecast = format_forecast(data)
+
+    assert len(hourly_forecast) == 24
+    assert len(daily_forecast) == 2
+
+    assert hourly_forecast[0].time == "2026-07-26T00:00"
+    assert hourly_forecast[0].temperature == 20
+    assert hourly_forecast[0].apparent_temperature == 19
+    assert hourly_forecast[0].precipitation_probability == 10
+    assert hourly_forecast[0].weather_code == 0
+
+    assert daily_forecast[0].date == "2026-07-26"
+    assert daily_forecast[0].max_temperature == 25
+    assert daily_forecast[0].mean_temperature == 20
+    assert daily_forecast[0].min_temperature == 15
+    assert daily_forecast[0].weather_code == 0
