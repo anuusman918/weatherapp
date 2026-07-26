@@ -88,6 +88,7 @@ function error() {
 }
 
 function displayForecast(data) {
+    document.getElementById("location-name").textContent = data.location;
 
     hourlyForecastContainer.innerHTML = "";
 

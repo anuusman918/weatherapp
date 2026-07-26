@@ -37,7 +37,7 @@ def forecast(location: str):
                 detail="Location not found",
             )
 
-        latitude, longitude = coordinates
+        latitude, longitude, location_name = coordinates
         data = get_forecast(latitude, longitude)
 
     except requests.RequestException:
@@ -55,6 +55,7 @@ def forecast(location: str):
         )
     
     return {
+        "location": location_name,
         "hourly_forecast": hourly_forecast,
         "daily_forecast": daily_forecast,
     }
@@ -80,6 +81,7 @@ def forecast_by_coordinates(latitude: float, longitude: float):
         )
     
     return {
+        "location": f"{latitude:.4f}, {longitude:.4f}",
         "hourly_forecast": hourly_forecast,
         "daily_forecast": daily_forecast,
     }

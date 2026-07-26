@@ -22,7 +22,7 @@ def find_coordinates(location):
     first_result = data["results"][0]
     latitude = first_result["latitude"]
     longitude = first_result["longitude"]
-    return latitude, longitude
+    return latitude, longitude, first_result["name"]
 
 
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"

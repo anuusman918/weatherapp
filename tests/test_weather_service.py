@@ -9,14 +9,15 @@ def test_find_coordinates_success(mock_get):
         "results": [
             {
                 "latitude": 0,
-                "longitude": 0
+                "longitude": 0,
+                "name" : "Manchester"
             }
         ]
     }
 
     result = find_coordinates("Manchester")
 
-    assert result == (0, 0)
+    assert result == (0, 0, "Manchester")
     mock_get.assert_called_once()
 
 
